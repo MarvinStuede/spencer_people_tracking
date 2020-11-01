@@ -8,12 +8,22 @@
             - composite/rgbd_ground_hog_aggregated
         -->
 
+        <node name="fuse_lasers_and_velo" pkg="nodelet" type="nodelet" args="load spencer_detected_person_association/EuclideanNNFuserNodelet detected_person_association_nodelet_manager" output="screen">
+            <param name="detection_id_increment" value="20"/>
+            <param name="detection_id_offset" value="10"/>
+            <rosparam param="input_topics">
+                - composite/velodyne_aggregated
+                - composite/lasers_aggregated
+            </rosparam>
+            <remap from="output" to="composite/lasers_velodyne_fused"/>
+        </node>
+
         <!-- Fuse lasers with upper-body. Both have reliable depth estimates, so we can fuse in Euclidean space -->
         <node name="fuse_lasers_and_rgbd_upper_body" pkg="nodelet" type="nodelet" args="load spencer_detected_person_association/EuclideanNNFuserNodelet detected_person_association_nodelet_manager" output="screen">
             <param name="detection_id_increment" value="20"/>
             <param name="detection_id_offset" value="11"/>
             <rosparam param="input_topics">
-                - composite/lasers_aggregated
+                - composite/lasers_velodyne_fused
                 - composite/rgbd_upper_body_aggregated
             </rosparam>
             <remap from="output" to="composite/lasers_upper_body_fused"/>
